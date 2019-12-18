@@ -15,9 +15,11 @@ app.get("/",function(req,res){
 })
 
 app.post("/",function(req,res){
+  //Obtain data from signup.html
   var firstName = req.body.firstName;
   var lastName = req.body.lastName;
   var email = req.body.email;
+  //Set signup data to send to the mailchimp API.
   var data = {
     members: [
       {
@@ -30,8 +32,8 @@ app.post("/",function(req,res){
       }
     ]
   }
-
   jsonData = JSON.stringify(data);
+  //Set options object that contains the URL, Authentication info and data to send to the mailchimp API.
   var options = {
     url: "https://us4.api.mailchimp.com/3.0/lists/fe125f96d5",
     method:"POST",
@@ -40,16 +42,19 @@ app.post("/",function(req,res){
     },
     body: jsonData
   }
+  //Set reuest object who make the post request to the mailchimp API.
   request(options,function(error,response,body){
-    if(error){
-      console.log(error);
+    if(response.statusCode == 200){
+      res.sendFile(__dirname + "/success.html");
     }else{
-      console.log(response.statusCode);
+      res.sendFile(__dirname + "/failure.html");
     }
   });
-
-  console.log(firstName + lastName + email);
 });
+
+app.post("/failure", function(req,res){
+  res.redirect("/");
+})
 
 
 
